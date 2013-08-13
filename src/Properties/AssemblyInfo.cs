@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TrelloReleaseNotes")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("TrelloReleaseNotes")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Manuel Spezzani")]
 [assembly: AssemblyProduct("TrelloReleaseNotes")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCopyright("Copyright ©  2013 Manuel Spezzani")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
