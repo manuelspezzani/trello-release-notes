@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using RazorEngine;
 using TrelloNet;
 
 namespace TrelloReleaseNotes
@@ -14,8 +16,9 @@ namespace TrelloReleaseNotes
 
             trello.Authorize(options.AuthorizationToken);
 
+            Console.WriteLine("Fetching cards...\n");
             var cardsGroupedByLabel = FetchCardsOfList(trello, options.BoardId, options.List)
-                                        .GroupBy(x => string.Join(", ", x.Labels.Select(l => l.Name)));
+                                        .GroupBy(x => x.Labels);
 
             foreach (var group in cardsGroupedByLabel)
             {
@@ -25,11 +28,14 @@ namespace TrelloReleaseNotes
                 foreach (var card in group)
                 {
                     Console.WriteLine(card.Name);
-                    Console.WriteLine(card.Desc);
                     Console.WriteLine();
                 }
             }
 
+            File.WriteAllText(options.Output,
+                              Razor.Parse(File.ReadAllText("DefaultTemplate\\template.html"), new { options.SoftwareName, options.SoftwareVersion, Groups = cardsGroupedByLabel }));
+
+            Console.WriteLine("\n\nRelease notes generated successfully!");
 #if DEBUG
             Console.ReadLine();
 #endif
@@ -43,7 +49,7 @@ namespace TrelloReleaseNotes
                 .ForBoard(board)
                 .First(x => string.Compare(x.Name, listId, StringComparison.InvariantCultureIgnoreCase) == 0);
 
-            return trello.Cards.ForList(list).ToArray();
+            return trello.Cards.ForList(list).Select(x => new Card(x)).ToArray();
         }
 
         private static Options ParseArgumentsOrExit(string[] args, Trello trello)

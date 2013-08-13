@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <style media="screen" type="text/css">
+        body {
+            padding: 50px;
+            font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+            background-color: #F0F0F0;
+        }
+
+        a {
+            color: #00B7FF;
+        }
+
+        .groupSeparator {
+            margin-left: 0px;
+            margin-right: 0px;
+            border-top-style: solid;
+            border-right-style: none;
+            border-bottom-style: none;
+            border-left-style: none;
+            border-top-width: 1px;
+            border-top-color: rgb(238, 238, 238);
+        }
+
+        .releaseNotes {
+            padding-bottom: 0;
+            background-color: rgb(255, 255, 255);
+            padding-left: 20px;
+            padding-top: 5px;
+        }
+
+        .featureDescription p {
+            margin-top: 0px;
+        }
+
+    </style>
+
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div class="releaseNotes">
+        <h3 style="padding-bottom: 9px;">@Model.SoftwareName – release @Model.SoftwareVersion</h3>
+
+        <div>
+            @foreach (IGrouping<string, TrelloReleaseNotes.Card> featureGroup in Model.Groups) {
+                <p><strong>@featureGroup.Key (@featureGroup.Count())</strong></p>
+                <hr class="groupSeparator" width="95%" />
+                <ul>
+                    @foreach (TrelloReleaseNotes.Card card in featureGroup) {
+                        <li style="margin-bottom: 5px;">
+                            <strong>@Raw(@card.Name)</strong>
+                            <div class="featureDescription">@Raw(@card.Description)</div>
+                        </li>
+                    }
+                </ul>
+                <br />
+            }
+        </div>
+    </div>
+</body>
+</html>
