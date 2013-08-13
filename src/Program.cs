@@ -24,8 +24,11 @@ namespace TrelloReleaseNotes
 
             GenerateReleaseNotes(options, cards);
 
-            Console.WriteLine("Updating cards...");
-            UpdateCards(trello, cards, options.SoftwareVersion);
+            if (!options.Pretend)
+            {
+                Console.WriteLine("Updating cards...");
+                UpdateCards(trello, cards, options.SoftwareVersion);
+            }
 
             Console.WriteLine("\n\nRelease notes generated successfully!");
 #if DEBUG
