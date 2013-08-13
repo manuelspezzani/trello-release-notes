@@ -1,5 +1,4 @@
-﻿using System;
-using CommandLine;
+﻿using CommandLine;
 using CommandLine.Text;
 
 namespace TrelloReleaseNotes
@@ -26,6 +25,9 @@ namespace TrelloReleaseNotes
 
         [Option('o', "output", HelpText = "Output file to generate", DefaultValue = "releaseNotes.html")]
         public string Output { get; set; }
+
+        [Option("template", HelpText = "Template file to be used for release notes generation", DefaultValue = "default_template.html")]
+        public string Template { get; set; }
 
         [HelpOption]
         public string GetUsage()

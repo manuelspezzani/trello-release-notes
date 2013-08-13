@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RazorEngine;
@@ -17,31 +18,36 @@ namespace TrelloReleaseNotes
             trello.Authorize(options.AuthorizationToken);
 
             Console.WriteLine("Fetching cards...\n");
-            var cardsGroupedByLabel = FetchCardsOfList(trello, options.BoardId, options.List)
-                                        .GroupBy(x => x.Labels);
+            var cards = FetchCardsOfSelectedList(trello, options.BoardId, options.List).ToArray();
+            
+            DumpCardsOnConsole(cards);
 
-            foreach (var group in cardsGroupedByLabel)
-            {
-                Console.WriteLine(string.Join(", ", group.Key));
-                Console.WriteLine("------------------------------------");
-
-                foreach (var card in group)
-                {
-                    Console.WriteLine(card.Name);
-                    Console.WriteLine();
-                }
-            }
-
-            File.WriteAllText(options.Output,
-                              Razor.Parse(File.ReadAllText("DefaultTemplate\\template.html"), new { options.SoftwareName, options.SoftwareVersion, Groups = cardsGroupedByLabel }));
+            GenerateReleaseNotes(options, cards);
 
             Console.WriteLine("\n\nRelease notes generated successfully!");
 #if DEBUG
-            Console.ReadLine();
+            System.Diagnostics.Process.Start(options.Output);
 #endif
         }
 
-        private static Card[] FetchCardsOfList(ITrello trello, string boardId, string listId)
+        private static void DumpCardsOnConsole(Card[] cards)
+        {
+            foreach (var card in cards)
+            {
+                Console.WriteLine("{0} - {1}", card.Labels, card.Name);
+            }
+        }
+
+        private static void GenerateReleaseNotes(Options options, Card[] cards)
+        {
+            var cardsGroupedByLabel = cards.GroupBy(x => x.Labels).ToArray();
+
+            File.WriteAllText(options.Output,
+                              Razor.Parse(File.ReadAllText(options.Template),
+                                          new {options.SoftwareName, options.SoftwareVersion, Groups = cardsGroupedByLabel}));
+        }
+
+        private static IEnumerable<Card> FetchCardsOfSelectedList(ITrello trello, string boardId, string listId)
         {
             var board = trello.Boards.WithId(boardId);
 
@@ -49,10 +55,10 @@ namespace TrelloReleaseNotes
                 .ForBoard(board)
                 .First(x => string.Compare(x.Name, listId, StringComparison.InvariantCultureIgnoreCase) == 0);
 
-            return trello.Cards.ForList(list).Select(x => new Card(x)).ToArray();
+            return trello.Cards.ForList(list).Select(x => new Card(x));
         }
 
-        private static Options ParseArgumentsOrExit(string[] args, Trello trello)
+        private static Options ParseArgumentsOrExit(string[] args, ITrello trello)
         {
             var options = new Options();
             if (!CommandLine.Parser.Default.ParseArguments(args, options))
