@@ -24,10 +24,21 @@ namespace TrelloReleaseNotes
 
             GenerateReleaseNotes(options, cards);
 
+            Console.WriteLine("Updating cards...");
+            UpdateCards(trello, cards, options.SoftwareVersion);
+
             Console.WriteLine("\n\nRelease notes generated successfully!");
 #if DEBUG
             System.Diagnostics.Process.Start(options.Output);
 #endif
+        }
+
+        private static void UpdateCards(ITrello trello, Card[] cards, string softwareVersion)
+        {
+            foreach (var card in cards)
+            {
+                card.SetReleaseVersion(softwareVersion, trello);
+            }
         }
 
         private static void DumpCardsOnConsole(Card[] cards)

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using MarkdownSharp;
+using TrelloNet;
 
 namespace TrelloReleaseNotes
 {
@@ -19,7 +20,7 @@ namespace TrelloReleaseNotes
             get { return _card.Name; }
         }
 
-        public string Description
+        public string HtmlDescription
         {
             get
             {
@@ -30,6 +31,20 @@ namespace TrelloReleaseNotes
         public string Labels
         {
             get { return string.Join(", ", _card.Labels.Select(x => x.Name)); }
+        }
+
+        public void SetReleaseVersion(string softwareVersion, ITrello trello)
+        {
+            if (_card.Desc.Contains(ReleaseTag(softwareVersion)))
+                return;
+
+            _card.Desc += ReleaseTag(softwareVersion);
+            trello.Cards.ChangeDescription(_card, _card.Desc);
+        }
+
+        private static string ReleaseTag(string softwareVersion)
+        {
+            return string.Format("\n\nRELEASED: {0}", softwareVersion);
         }
     }
 }

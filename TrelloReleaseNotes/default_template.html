@@ -52,7 +52,7 @@
                     @foreach (TrelloReleaseNotes.Card card in featureGroup) {
                         <li style="margin-bottom: 5px;">
                             <strong>@Raw(@card.Name)</strong>
-                            <div class="featureDescription">@Raw(@card.Description)</div>
+                            <div class="featureDescription">@Raw(@card.HtmlDescription)</div>
                         </li>
                     }
                 </ul>
