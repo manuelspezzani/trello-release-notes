@@ -14,9 +14,10 @@ namespace TrelloReleaseNotes
 
             trello.Authorize(options.AuthorizationToken);
 
-            var cards = FetchCards(trello, options);
+            var cardsGroupedByLabel = FetchCardsOfList(trello, options.BoardId, options.List)
+                                        .GroupBy(x => string.Join(", ", x.Labels.Select(l => l.Name)));
 
-            foreach (var group in cards.GroupBy(x => string.Join(", ", x.Labels.Select(l => l.Name))))
+            foreach (var group in cardsGroupedByLabel)
             {
                 Console.WriteLine(string.Join(", ", group.Key));
                 Console.WriteLine("------------------------------------");
@@ -34,16 +35,15 @@ namespace TrelloReleaseNotes
 #endif
         }
 
-        private static Card[] FetchCards(Trello trello, Options options)
+        private static Card[] FetchCardsOfList(ITrello trello, string boardId, string listId)
         {
-            var board = trello.Boards.WithId(options.BoardId);
+            var board = trello.Boards.WithId(boardId);
 
             var list = trello.Lists
                 .ForBoard(board)
-                .First(x => string.Compare(x.Name, options.List, StringComparison.InvariantCultureIgnoreCase) == 0);
+                .First(x => string.Compare(x.Name, listId, StringComparison.InvariantCultureIgnoreCase) == 0);
 
-            var cards = trello.Cards.ForList(list).ToArray();
-            return cards;
+            return trello.Cards.ForList(list).ToArray();
         }
 
         private static Options ParseArgumentsOrExit(string[] args, Trello trello)

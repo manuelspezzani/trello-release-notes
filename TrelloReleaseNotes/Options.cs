@@ -15,16 +15,16 @@ namespace TrelloReleaseNotes
         [Option('l', "list", DefaultValue = "Done", HelpText = "Name of the list containing done cards")]
         public string List { get; set; }
 
-        [Option('s', "software", HelpText = "Software name")]
-        public string SoftwareName { get; set; }
-
         [Option('v', "version", Required = true, HelpText = "Software version to be released")]
         public string SoftwareVersion { get; set; }
+
+        [Option('s', "software", HelpText = "Software name")]
+        public string SoftwareName { get; set; }
 
         [Option('p', "pretend", HelpText = "Simulates the execution", DefaultValue = false)]
         public bool Pretend { get; set; }
 
-        [Option('o', "output", Required = true, HelpText = "Output file to generate", DefaultValue = "out.txt")]
+        [Option('o', "output", Required = true, HelpText = "Output file to generate", DefaultValue = "releaseNotes.html")]
         public string Output { get; set; }
 
         [HelpOption]
