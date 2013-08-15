@@ -45,11 +45,11 @@
         <h3 style="padding-bottom: 9px;">@Model.SoftwareName – release @Model.SoftwareVersion</h3>
 
         <div>
-            @foreach (IGrouping<string, TrelloReleaseNotes.Card> featureGroup in Model.Groups) {
+            @foreach (IGrouping<string, TrelloReleaseNotes.ReleaseNotesCard> featureGroup in Model.Groups) {
                 <p><strong>@featureGroup.Key (@featureGroup.Count())</strong></p>
                 <hr class="groupSeparator" width="95%" />
                 <ul>
-                    @foreach (TrelloReleaseNotes.Card card in featureGroup) {
+                    @foreach (TrelloReleaseNotes.ReleaseNotesCard card in featureGroup) {
                         <li style="margin-bottom: 5px;">
                             <strong>@Raw(@card.Name)</strong>
                             <div class="featureDescription">@Raw(@card.HtmlDescription)</div>

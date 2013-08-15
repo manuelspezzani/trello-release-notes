@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using RazorEngine;
 using TrelloNet;
 
 namespace TrelloReleaseNotes
@@ -19,15 +17,12 @@ namespace TrelloReleaseNotes
 
             Console.WriteLine("Fetching cards...\n");
             var cards = FetchCardsOfSelectedList(trello, options.BoardId, options.List).ToArray();
-            
-            DumpCardsOnConsole(cards);
 
-            GenerateReleaseNotes(options, cards);
+            var tasks = new TaskBuilder().BuildFor(options);
 
-            if (!options.Pretend)
+            foreach (var cardTask in tasks)
             {
-                Console.WriteLine("Updating cards...");
-                UpdateCards(trello, cards, options.SoftwareVersion);
+                cardTask.DoWork(cards, trello);
             }
 
             Console.WriteLine("\n\nRelease notes generated successfully!");
@@ -36,32 +31,7 @@ namespace TrelloReleaseNotes
 #endif
         }
 
-        private static void UpdateCards(ITrello trello, Card[] cards, string softwareVersion)
-        {
-            foreach (var card in cards)
-            {
-                card.SetReleaseVersion(softwareVersion, trello);
-            }
-        }
-
-        private static void DumpCardsOnConsole(Card[] cards)
-        {
-            foreach (var card in cards)
-            {
-                Console.WriteLine("{0} - {1}", card.Labels, card.Name);
-            }
-        }
-
-        private static void GenerateReleaseNotes(Options options, Card[] cards)
-        {
-            var cardsGroupedByLabel = cards.GroupBy(x => x.Labels).ToArray();
-
-            File.WriteAllText(options.Output,
-                              Razor.Parse(File.ReadAllText(options.Template),
-                                          new {options.SoftwareName, options.SoftwareVersion, Groups = cardsGroupedByLabel}));
-        }
-
-        private static IEnumerable<Card> FetchCardsOfSelectedList(ITrello trello, string boardId, string listId)
+        private static IEnumerable<TrelloNet.Card> FetchCardsOfSelectedList(ITrello trello, string boardId, string listId)
         {
             var board = trello.Boards.WithId(boardId);
 
@@ -69,7 +39,7 @@ namespace TrelloReleaseNotes
                 .ForBoard(board)
                 .First(x => string.Compare(x.Name, listId, StringComparison.InvariantCultureIgnoreCase) == 0);
 
-            return trello.Cards.ForList(list).Select(x => new Card(x));
+            return trello.Cards.ForList(list);
         }
 
         private static Options ParseArgumentsOrExit(string[] args, ITrello trello)
