@@ -1,9 +1,10 @@
 ﻿using CommandLine;
 using CommandLine.Text;
+using TrelloReleaseNotes.Core;
 
 namespace TrelloReleaseNotes
 {
-    internal class Options
+    public class Options : IOptions
     {
         [Option('s', "software", Required = true, HelpText = "Software name")]
         public string SoftwareName { get; set; }

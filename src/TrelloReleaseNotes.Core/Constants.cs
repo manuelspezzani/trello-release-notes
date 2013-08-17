@@ -1,4 +1,4 @@
-﻿namespace TrelloReleaseNotes
+﻿namespace TrelloReleaseNotes.Core
 {
     public class Constants
     {

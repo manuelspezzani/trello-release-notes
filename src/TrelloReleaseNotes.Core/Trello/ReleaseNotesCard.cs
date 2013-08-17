@@ -2,7 +2,7 @@
 using MarkdownSharp;
 using TrelloNet;
 
-namespace TrelloReleaseNotes
+namespace TrelloReleaseNotes.Core.Trello
 {
     public class ReleaseNotesCard
     {

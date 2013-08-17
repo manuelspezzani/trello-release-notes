@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using TrelloReleaseNotes.Tasks;
+using TrelloReleaseNotes.Core.ReleaseTasks;
 
-namespace TrelloReleaseNotes
+namespace TrelloReleaseNotes.Core
 {
     internal class TaskBuilder
     {
-        public IEnumerable<ICardTask> BuildFor(Options options)
+        internal IEnumerable<ICardTask> BuildFor(IOptions options)
         {
             yield return new ConsoleDump();
             yield return new ReleaseNotes(options);
