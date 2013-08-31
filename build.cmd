@@ -1,1 +1,1 @@
-%windir%\Microsoft.NET\Framework\v4.0.30319\msbuild build.proj
+%windir%\Microsoft.NET\Framework\v4.0.30319\msbuild build.proj /clp:PerformanceSummary
